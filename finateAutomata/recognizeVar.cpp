@@ -1,70 +1,44 @@
 #include <iostream>
 #include <list>
+#include <string>
 using namespace std;
 
-struct Token {
-  string type = "";
-  Token(string t) {
-    this->type = t;
-  }
-};
-
-struct Parsec {
-  int n = 0, pos = 0;
+struct Parse {
+  int i = 0, n;
   string input = "";
-  list<Token> tokens;
+  list<string> status;
   bool validity = true;
 };
 
-char head(Parsec& parsec);
-void getInput(Parsec& parsec);
-
-bool isNull(char c);
-bool isNumber(char c);
-bool isOperator(char c);
-bool isNumberSign(char c);
-
-bool isValid(Parsec& parsec);
-
-void S(Parsec& parsec);
-void A(Parsec& parsec);
-void B(Parsec& parsec);
-void C(Parsec& parsec);
-
-int main() {
-  do {
-    Parsec parsec;
-    getInput(parsec);
-    if(parsec.input == "exit") break;
-
-    S(parsec);
-
-    if(!isValid(parsec)) {
-      Token token ("ERR");
-      parsec.tokens.push_back(token);
-    }
-
-    printf("=> ");
-    for(Token t : parsec.tokens) cout << t.type << " ";
-    printf("\n");
-  } while(true);
-
-  return 0;
+void getInput(Parse& parse) {
+  printf(">> ");
+  getline(cin, parse.input);
+  parse.n = parse.input.size();
 };
 
-char head(Parsec& parsec) {
+char head(Parse& parse) {
   char c = '\0';
-  if(parsec.pos < parsec.n) {
-    c = parsec.input[parsec.pos];
-    parsec.pos++;
+  if(parse.i < parse.n) {
+    c = parse.input[parse.i];
+    parse.i++;
   }
   return c;
 }
 
-void getInput(Parsec& parsec) {
-  printf(">> ");
-  getline(cin, parsec.input);
-  parsec.n = parsec.input.size();
+bool isValid(Parse& parse) {
+  return parse.validity;
+}
+
+bool isLetter(char c) {
+  int x = (int) c;
+  if((x >= 65 && x <= 90) || (x >= 97 && x <= 122)) return true;
+  return false;
+}
+
+bool isNumber(char c) {
+  int x = (int) c;
+  if(48 <= x && x <= 57) return true;
+  return false;
 }
 
 bool isNull(char c) {
@@ -72,72 +46,48 @@ bool isNull(char c) {
   return true;
 }
 
-bool isNumber(char c) {
-  int x = (int) c;
-  if(!(47 < x && x < 58)) return false;
-  return true;
-}
-
-bool isOperator(char c) {
-  int x = (int) c;
-  if(x != 42 && x != 43 && x != 45 && x != 47) return false;
-  return true;
-}
-
-bool isNumberSign(char c) {
-  int x = (int) c;
-  if(x != 43 && x != 45) return false;
-  return true;
-}
-
-bool isValid(Parsec& parsec) {
-  return parsec.validity;
-}
-
-void S(Parsec& parsec) {
-  if(isValid(parsec)) {
-    char h = head(parsec);
-    if(isNumberSign(h))
-      A(parsec);
-    else if(isNumber(h))
-      B(parsec);
-    else parsec.validity = false;
+void A(Parse& parse) {
+  if(isValid(parse)) {
+    char h = head(parse);
+    parse.validity = true;
   }
 }
 
-void A(Parsec& parsec) {
-  if(isValid(parsec)) {
-    char h = head(parsec);
-    if(isNumber(h))
-      B(parsec);
-    else parsec.validity = false;
+void B(Parse& parse) {
+  if(isValid(parse)) {
+    char h = head(parse);
+    parse.validity = false;
   }
 }
 
-void B(Parsec& parsec) {
-  if(isValid(parsec)) {
-    char h = head(parsec);
-    if(isNull(h)) {
-      Token token("NUM");
-      parsec.tokens.push_back(token);
-    } else if(isNumber(h))
-        B(parsec);
-    else if(isOperator(h)) {
-      Token token("NUM");
-      parsec.tokens.push_back(token);
-
-      C(parsec);
-    } else parsec.validity = false;
+void S(Parse& parse) {
+  if(isValid(parse)) {
+    char h = head(parse);
+    if(isLetter(h))
+      A(parse);
+    else if(isNull(h))
+      B(parse);
+    else
+      parse.validity = false;
   }
 }
 
-void C(Parsec& parsec) {
-  if(isValid(parsec)) {
-    char h = head(parsec);
-    if(isNumber(h)) {
-      Token token("OPR");
-      parsec.tokens.push_back(token);
-      B(parsec);
-    } else parsec.validity = false;
-  }
+int main() {
+  do {
+    Parse parse;
+    getInput(parse);
+
+    if(parse.input == "exit") break;
+
+    S(parse);
+
+    printf("=> ");
+    if(parse.validity)
+      printf("TRUE");
+    else
+      printf("FALSE");
+
+    printf("\n");
+
+  } while(true);
 }
