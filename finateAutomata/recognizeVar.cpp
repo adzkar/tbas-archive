@@ -6,7 +6,6 @@ using namespace std;
 struct Parse {
   int i = 0, n;
   string input = "";
-  list<string> status;
   bool validity = true;
 };
 
