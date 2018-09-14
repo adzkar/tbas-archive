@@ -1,10 +1,12 @@
 #include <iostream>
 #include <string>
+#include <list>
 using namespace std;
 
 struct Parse {
   int i = 0,n = 1;
   string input = "";
+  list<string> visited;
   bool validity = true;
 };
 
@@ -33,16 +35,17 @@ int main() {
     Parse parse;
     getInput(parse);
 
-    if(parse.input == "exit") break;
+    if(parse.input == "exit" || parse.input == "EXIT") break;
 
-    // cout << (int) parse.input[0] << endl;
     S(parse);
 
     if(parse.validity)
-      printf("TRUE");
+      printf("=> REAL NUMBER");
     else
-      printf("FALSE");
+      printf("=> NOT REAL NUMBER");
     printf("\n");
+    // show route
+    // for(string visited: parse.visited) cout << visited << " ";
 
   } while(true);
 
@@ -88,8 +91,8 @@ bool isOperator(char c) {
 }
 bool isDot(char c) {
   int x = (int) c;
-  if(x != 46 || x != 44) return false;
-  return true;
+  if(x == 46 || x == 44) return true;
+  else return false;
 }
 
 void S(Parse& parse){
@@ -99,6 +102,7 @@ void S(Parse& parse){
       A(parse);
     else
       parse.validity = false;
+    parse.visited.push_back("S");
   }
 }
 void A(Parse& parse) {
@@ -112,6 +116,7 @@ void A(Parse& parse) {
       D(parse);
     else
       parse.validity = false;
+    parse.visited.push_back("A");
   }
 }
 void B(Parse& parse) {
@@ -123,6 +128,7 @@ void B(Parse& parse) {
       C(parse);
     else
       parse.validity = false;
+    parse.visited.push_back("B");
   }
 }
 void C(Parse& parse) {
@@ -132,6 +138,7 @@ void C(Parse& parse) {
       F(parse);
     else
       parse.validity = false;
+    parse.visited.push_back("C");
   }
 }
 void D(Parse& parse) {
@@ -141,6 +148,7 @@ void D(Parse& parse) {
       E(parse);
     else
       parse.validity = false;
+    parse.visited.push_back("D");
   }
 }
 void E(Parse& parse) {
@@ -150,6 +158,8 @@ void E(Parse& parse) {
       E(parse);
     else if (isE(h))
       B(parse);
+    parse.validity = true;
+    parse.visited.push_back("E");
   }
 }
 void F(Parse& parse) {
@@ -157,5 +167,7 @@ void F(Parse& parse) {
     char h = head(parse);
     if(isNumber(h))
       F(parse);
+    parse.validity = true;
+    parse.visited.push_back("F");
   }
 }
