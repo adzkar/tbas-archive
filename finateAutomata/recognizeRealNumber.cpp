@@ -114,8 +114,7 @@ void A(Parse& parse) {
       B(parse);
     else if(isDot(h))
       D(parse);
-    else
-      parse.validity = false;
+    parse.validity = true;
     parse.visited.push_back("A");
   }
 }
