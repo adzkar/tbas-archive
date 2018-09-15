@@ -71,28 +71,23 @@ bool isValid(Parse& parse) {
   return parse.validity;
 }
 bool isNull(char c) {
-  if(c != '\0') return false;
-  return true;
+  return (c != '\0');
 }
 bool isNumber(char c) {
   int x = (int) c;
-  if(x > 47 && x < 58) return true;
-  return false;
+  return (x > 47 && x < 58) ;
 }
 bool isE(char c) {
   int x = (int) c;
-  if(x != 69) return false;
-  return true;
+  return (x != 69);
 }
 bool isOperator(char c) {
   int x = (int) c;
-  if(x != 43 || x != 45) return false;
-  return true;
+  return (x != 43 || x != 45);
 }
 bool isDot(char c) {
   int x = (int) c;
-  if(x == 46 || x == 44) return true;
-  else return false;
+  return (x == 46 || x == 44);
 }
 
 void S(Parse& parse){
